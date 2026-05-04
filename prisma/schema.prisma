@@ -1,0 +1,260 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String     @id @default(cuid())
+  email         String     @unique
+  name          String?
+  password      String?
+  emailVerified DateTime?
+  image         String?
+  role          Role       @default(CUSTOMER)
+  accounts      Account[]
+  sessions      Session[]
+  profile       Profile?
+  orders        Order[]
+  products      Product[]
+  reviews       Review[]
+  lessonsCompleted UserLesson[]
+  fileMetadata  FileMetadata[]
+  downloadLogs  DownloadLog[]
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+  @@unique([identifier, token])
+}
+
+model Profile {
+  id             String  @id @default(cuid())
+  bio            String?
+  avatar         String?
+  youtubeChannel String?
+  website        String?
+  userId         String  @unique
+  user           User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Product {
+  id            String      @id @default(cuid())
+  title         String
+  slug          String      @unique
+  description   String      @db.Text
+  price         Float
+  originalPrice Float?
+  category      Category    @default(COURSE)
+  type          ProductType
+  authorId      String
+  author        User        @relation(fields: [authorId], references: [id])
+  images        String[]
+  previewUrl    String?
+  previewType   String?
+  fileUrl       String?
+  youtubeId     String?
+  videoDuration Int?
+  features      String[]
+  lessons       Lesson[]
+  reviews       Review[]
+  tags          String[]
+  published     Boolean     @default(false)
+  featured      Boolean     @default(false)
+  rating        Float       @default(0)
+  reviewCount   Int         @default(0)
+  orderItems    OrderItem[]
+  fileMetadata  FileMetadata[]
+  downloadLogs  DownloadLog[]
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  rating    Int
+  comment   String?  @db.Text
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, productId])
+}
+
+model Lesson {
+  id          String       @id @default(cuid())
+  title       String
+  description String?      @db.Text
+  videoUrl    String
+  videoId     String?
+  duration    Int?
+  order       Int
+  isFree      Boolean      @default(false)
+  productId   String
+  product     Product      @relation(fields: [productId], references: [id], onDelete: Cascade)
+  completedBy UserLesson[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+model UserLesson {
+  userId      String
+  lessonId    String
+  completed   Boolean   @default(false)
+  completedAt DateTime?
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lesson      Lesson    @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  @@id([userId, lessonId])
+}
+
+model Coupon {
+  id          String      @id @default(cuid())
+  code        String      @unique
+  discount    Float
+  type        CouponType  @default(PERCENTAGE)
+  maxUses     Int?
+  usedCount   Int         @default(0)
+  expiresAt   DateTime?
+  active      Boolean     @default(true)
+  createdAt   DateTime    @default(now())
+}
+
+model Order {
+  id            String      @id @default(cuid())
+  userId        String
+  user          User        @relation(fields: [userId], references: [id])
+  items         OrderItem[]
+  subtotal      Float
+  discount      Float       @default(0)
+  total         Float
+  status        OrderStatus @default(PENDING)
+  paymentIntent String?
+  couponCode    String?
+  downloadLogs  DownloadLog[]
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+}
+
+model OrderItem {
+  id        String  @id @default(cuid())
+  orderId   String
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+  quantity  Int     @default(1)
+  price     Float
+}
+
+enum Role {
+  ADMIN
+  INSTRUCTOR
+  CUSTOMER
+}
+
+enum Category {
+  COURSE
+  MUSIC
+  SAMPLE
+  LOOP
+}
+
+enum ProductType {
+  COURSE
+  DIGITAL_DOWNLOAD
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+}
+
+enum CouponType {
+  PERCENTAGE
+  FIXED
+}
+
+model FileMetadata {
+  id          String   @id @default(cuid())
+  key         String   @unique
+  url         String
+  filename    String
+  size        Int
+  contentType String
+  folder      String
+  
+  // Media-specific metadata
+  duration    Int?
+  width       Int?
+  height      Int?
+  bitrate     Int?
+  resolution  String?
+  format      String?
+  
+  // Relationships
+  productId   String?
+  product     Product? @relation(fields: [productId], references: [id], onDelete: Cascade)
+  
+  userId      String?
+  user        User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@index([productId])
+  @@index([userId])
+  @@index([folder])
+}
+
+model DownloadLog {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  orderId     String
+  order       Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId   String
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  
+  downloadedAt DateTime @default(now())
+  ipAddress    String?
+  userAgent    String?
+  
+  @@index([userId, productId, downloadedAt])
+  @@index([orderId])
+}
