@@ -1,7 +1,8 @@
 'use client'
 
+import { Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
-import { Box, Container, Typography, Button, Stack, Alert } from '@mui/material'
+import { Box, Container, Typography, Button, Stack, Alert, CircularProgress } from '@mui/material'
 import Link from 'next/link'
 
 const errorMessages: Record<string, string> = {
@@ -14,7 +15,7 @@ const errorMessages: Record<string, string> = {
   CredentialsSignin: 'Email o contraseña incorrectos.',
 }
 
-export default function AuthErrorPage() {
+function ErrorContent() {
   const searchParams = useSearchParams()
   const error = searchParams.get('error') || 'Default'
   const message = errorMessages[error] || errorMessages.Default
@@ -64,5 +65,27 @@ export default function AuthErrorPage() {
         </Box>
       </Container>
     </Box>
+  )
+}
+
+export default function AuthErrorPage() {
+  return (
+    <Suspense
+      fallback={
+        <Box
+          sx={{
+            minHeight: '100vh',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            background: 'linear-gradient(135deg, #FF6B35 0%, #4ECDC4 100%)',
+          }}
+        >
+          <CircularProgress sx={{ color: '#fff' }} />
+        </Box>
+      }
+    >
+      <ErrorContent />
+    </Suspense>
   )
 }

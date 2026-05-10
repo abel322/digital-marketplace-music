@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, Suspense } from 'react'
 import { signIn } from 'next-auth/react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import {
@@ -18,7 +18,7 @@ import {
 } from '@mui/material'
 import Link from 'next/link'
 
-export default function LoginPage() {
+function LoginContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const callbackUrl = searchParams.get('callbackUrl') || '/dashboard'
@@ -172,5 +172,27 @@ export default function LoginPage() {
         </Box>
       </Container>
     </Box>
+  )
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense
+      fallback={
+        <Box
+          sx={{
+            minHeight: '100vh',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            background: 'linear-gradient(135deg, #FF6B35 0%, #4ECDC4 100%)',
+          }}
+        >
+          <CircularProgress sx={{ color: '#fff' }} />
+        </Box>
+      }
+    >
+      <LoginContent />
+    </Suspense>
   )
 }
