@@ -6,6 +6,7 @@ import ShoppingCartIcon from '@mui/icons-material/ShoppingCart'
 import FavoriteIcon from '@mui/icons-material/FavoriteBorder'
 import PlayArrowIcon from '@mui/icons-material/PlayArrow'
 import { useCart } from '@/context/CartContext'
+import PlayPreviewButton from '@/components/audio/PlayPreviewButton'
 
 interface ProductCardProps {
   id: string
@@ -20,6 +21,17 @@ interface ProductCardProps {
   badge?: string
   badgeColor?: string
   previewUrl?: string | null
+  artist?: string
+  bpm?: number | string
+  keySignature?: string
+}
+
+const DEMO_AUDIO_BY_SLUG: Record<string, string> = {
+  'trap-essentials-2024': 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+  'lofi-chill-beats-vol3': 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
+  'house-music-pack-vol1': 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3',
+  'rnb-guitar-loops': 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3',
+  'piano-melodies-pack': 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3',
 }
 
 const typeColors: Record<string, string> = {
@@ -49,10 +61,15 @@ export default function ProductCard({
   badge,
   badgeColor = '#FF6B35',
   previewUrl,
+  artist = 'DigitalMarket',
+  bpm,
+  keySignature,
 }: ProductCardProps) {
   const { addItem } = useCart()
   const color = typeColors[type] || '#FF6B35'
   const discount = originalPrice ? Math.round(((originalPrice - price) / originalPrice) * 100) : 0
+
+  const audioUrl = previewUrl || DEMO_AUDIO_BY_SLUG[slug] || (type === 'SAMPLE_PACK' || type === 'MUSIC' ? 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3' : null)
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault()
@@ -128,18 +145,22 @@ export default function ProductCard({
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
+            zIndex: 2,
           }}
         >
-          {previewUrl && (
-            <IconButton
-              sx={{
-                background: 'rgba(255,255,255,0.9)',
-                color: '#1A1A2E',
-                '&:hover': { background: '#FFFFFF' },
+          {audioUrl && (
+            <PlayPreviewButton
+              track={{
+                id,
+                title,
+                artist,
+                audioUrl,
+                coverUrl: images?.[0],
+                bpm: bpm || (type === 'SAMPLE_PACK' ? 128 : type === 'MUSIC' ? 95 : undefined),
+                key: keySignature || (type === 'SAMPLE_PACK' ? 'C Min' : type === 'MUSIC' ? 'A Maj' : undefined),
               }}
-            >
-              <PlayArrowIcon />
-            </IconButton>
+              variant="overlay"
+            />
           )}
         </Box>
 

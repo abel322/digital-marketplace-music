@@ -4,6 +4,7 @@ import { Box, Container, Typography, Grid, Chip, Button, Stack, Rating } from '@
 import Link from 'next/link'
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart'
 import PlayArrowIcon from '@mui/icons-material/PlayArrow'
+import PlayPreviewButton from '@/components/audio/PlayPreviewButton'
 
 const featuredProducts = [
   {
@@ -18,7 +19,8 @@ const featuredProducts = [
     badge: 'MÁS VENDIDO',
     badgeColor: '#FF6B35',
     type: 'course',
-    href: '/courses/produccion-musical-completa',
+    href: '/products/produccion-musical-completa',
+    audioUrl: null,
   },
   {
     id: '2',
@@ -32,7 +34,10 @@ const featuredProducts = [
     badge: 'NUEVO',
     badgeColor: '#4ECDC4',
     type: 'samples',
-    href: '/samples/trap-essentials-2024',
+    href: '/products/trap-essentials-2024',
+    audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+    bpm: 140,
+    key: 'F# Min',
   },
   {
     id: '3',
@@ -46,7 +51,10 @@ const featuredProducts = [
     badge: null,
     badgeColor: null,
     type: 'music',
-    href: '/music/lofi-chill-beats-vol3',
+    href: '/products/lofi-chill-beats-vol3',
+    audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
+    bpm: 85,
+    key: 'C Maj',
   },
   {
     id: '4',
@@ -60,7 +68,8 @@ const featuredProducts = [
     badge: 'OFERTA',
     badgeColor: '#FF6B35',
     type: 'course',
-    href: '/courses/mezcla-mastering-pro',
+    href: '/products/mezcla-mastering-pro',
+    audioUrl: null,
   },
 ]
 
@@ -139,15 +148,31 @@ export default function FeaturedProducts() {
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
+                      zIndex: 2,
                     }}
                   >
-                    <PlayArrowIcon
-                      sx={{
-                        fontSize: 60,
-                        color: categoryColors[product.category],
-                        opacity: 0.5,
-                      }}
-                    />
+                    {product.audioUrl ? (
+                      <PlayPreviewButton
+                        track={{
+                          id: product.id,
+                          title: product.title,
+                          artist: 'DigitalMarket',
+                          audioUrl: product.audioUrl,
+                          coverUrl: product.image || undefined,
+                          bpm: product.bpm,
+                          key: product.key,
+                        }}
+                        variant="overlay"
+                      />
+                    ) : (
+                      <PlayArrowIcon
+                        sx={{
+                          fontSize: 60,
+                          color: categoryColors[product.category],
+                          opacity: 0.5,
+                        }}
+                      />
+                    )}
                   </Box>
                   {product.badge && (
                     <Chip

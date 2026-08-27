@@ -6,7 +6,6 @@ export async function GET(req: NextRequest, { params }: { params: { slug: string
     const product = await prisma.product.findUnique({
       where: { slug: params.slug, published: true },
       include: {
-        category: true,
         reviews: {
           include: { user: { select: { name: true, image: true } } },
           orderBy: { createdAt: 'desc' },

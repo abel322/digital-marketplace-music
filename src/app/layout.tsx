@@ -3,6 +3,7 @@ import './globals.css'
 import { Providers } from './providers'
 import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
+import GlobalAudioPlayer from '@/components/audio/GlobalAudioPlayer'
 import { rootMetadata, websiteJsonLd } from '@/lib/seo'
 
 export const metadata = rootMetadata
@@ -32,12 +33,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <Providers>
           <Navbar />
-          <main style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+          <main className="pb-24 sm:pb-28" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
             {children}
           </main>
           <Footer />
+          <GlobalAudioPlayer />
         </Providers>
       </body>
     </html>
   )
 }
+

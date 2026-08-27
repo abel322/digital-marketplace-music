@@ -24,13 +24,13 @@ import ProductFilters, { FilterState } from '@/components/product/ProductFilters
 
 const MOCK_PRODUCTS = [
   { id: '1', title: 'Producción Musical Completa', slug: 'produccion-musical-completa', price: 97, originalPrice: 197, type: 'COURSE', rating: 4.9, reviewCount: 234, badge: 'MÁS VENDIDO', badgeColor: '#FF6B35' },
-  { id: '2', title: 'Pack Trap Essentials 2024', slug: 'trap-essentials-2024', price: 29, originalPrice: 59, type: 'SAMPLE_PACK', rating: 4.8, reviewCount: 189, badge: 'NUEVO', badgeColor: '#4ECDC4' },
-  { id: '3', title: 'Lo-Fi Chill Beats Vol. 3', slug: 'lofi-chill-beats-vol3', price: 19, type: 'MUSIC', rating: 4.7, reviewCount: 156 },
+  { id: '2', title: 'Pack Trap Essentials 2024', slug: 'trap-essentials-2024', price: 29, originalPrice: 59, type: 'SAMPLE_PACK', rating: 4.8, reviewCount: 189, badge: 'NUEVO', badgeColor: '#4ECDC4', previewUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3', bpm: 140, keySignature: 'F# Min' },
+  { id: '3', title: 'Lo-Fi Chill Beats Vol. 3', slug: 'lofi-chill-beats-vol3', price: 19, type: 'MUSIC', rating: 4.7, reviewCount: 156, previewUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3', bpm: 85, keySignature: 'C Maj' },
   { id: '4', title: 'Mezcla y Mastering Pro', slug: 'mezcla-mastering-pro', price: 67, originalPrice: 127, type: 'COURSE', rating: 4.9, reviewCount: 312, badge: 'OFERTA', badgeColor: '#FF6B35' },
-  { id: '5', title: 'House Music Pack Vol. 1', slug: 'house-music-pack-vol1', price: 39, type: 'SAMPLE_PACK', rating: 4.6, reviewCount: 98 },
+  { id: '5', title: 'House Music Pack Vol. 1', slug: 'house-music-pack-vol1', price: 39, type: 'SAMPLE_PACK', rating: 4.6, reviewCount: 98, previewUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3', bpm: 126, keySignature: 'G Min' },
   { id: '6', title: 'FL Studio Completo', slug: 'fl-studio-completo', price: 79, originalPrice: 149, type: 'COURSE', rating: 4.8, reviewCount: 267 },
-  { id: '7', title: 'R&B Guitar Loops', slug: 'rnb-guitar-loops', price: 25, type: 'SAMPLE_PACK', rating: 4.7, reviewCount: 143 },
-  { id: '8', title: 'Piano Melodies Pack', slug: 'piano-melodies-pack', price: 22, type: 'MUSIC', rating: 4.5, reviewCount: 87 },
+  { id: '7', title: 'R&B Guitar Loops', slug: 'rnb-guitar-loops', price: 25, type: 'SAMPLE_PACK', rating: 4.7, reviewCount: 143, previewUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3', bpm: 90, keySignature: 'D Min' },
+  { id: '8', title: 'Piano Melodies Pack', slug: 'piano-melodies-pack', price: 22, type: 'MUSIC', rating: 4.5, reviewCount: 87, previewUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3', bpm: 75, keySignature: 'E Min' },
 ]
 
 const SORT_OPTIONS = [

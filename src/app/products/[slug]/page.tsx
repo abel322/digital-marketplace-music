@@ -41,6 +41,7 @@ import SchoolIcon from '@mui/icons-material/School'
 import LibraryMusicIcon from '@mui/icons-material/LibraryMusic'
 import ProductCard from '@/components/product/ProductCard'
 import { useCart } from '@/context/CartContext'
+import PlayPreviewButton from '@/components/audio/PlayPreviewButton'
 
 // ─── Mock data (will be replaced by real API) ────────────────────────────────
 const MOCK_PRODUCTS: Record<string, any> = {
@@ -63,6 +64,7 @@ const MOCK_PRODUCTS: Record<string, any> = {
         instructor: { name: 'Carlos Medina', avatar: '', role: 'Productor con 15 años de experiencia' },
         images: [],
         tags: ['Producción', 'FL Studio', 'Mezcla', 'Beginner'],
+        previewUrl: null,
     },
     'trap-essentials-2024': {
         id: '2', title: 'Pack Trap Essentials 2024', slug: 'trap-essentials-2024',
@@ -74,6 +76,9 @@ const MOCK_PRODUCTS: Record<string, any> = {
         instructor: { name: 'Beat Lab Studio', avatar: '', role: 'Colección oficial 2024' },
         images: [],
         tags: ['Trap', 'Samples', 'Loops', 'Avanzado'],
+        previewUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+        bpm: 140,
+        key: 'F# Min',
     },
     'lofi-chill-beats-vol3': {
         id: '3', title: 'Lo-Fi Chill Beats Vol. 3', slug: 'lofi-chill-beats-vol3',
@@ -84,6 +89,9 @@ const MOCK_PRODUCTS: Record<string, any> = {
         instructor: { name: 'ChillWave Beats', avatar: '', role: 'Productor Lo-Fi' },
         images: [],
         tags: ['Lo-Fi', 'Chill', 'Música'],
+        previewUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
+        bpm: 85,
+        key: 'C Maj',
     },
     default: {
         id: '0', title: 'Producto no encontrado', slug: '',
@@ -91,6 +99,7 @@ const MOCK_PRODUCTS: Record<string, any> = {
         description: '',
         features: [], lessons: [], instructor: { name: '', avatar: '', role: '' },
         images: [], tags: [],
+        previewUrl: null,
     },
 }
 
@@ -132,6 +141,8 @@ function TabPanel({ children, value, index }: { children: React.ReactNode; value
 // ─── Image Gallery ────────────────────────────────────────────────────────────
 function ImageGallery({ product }: { product: any }) {
     const color = typeColors[product.type] || '#FF6B35'
+    const audioUrl = product.previewUrl || (product.type === 'SAMPLE_PACK' || product.type === 'MUSIC' ? 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3' : null)
+
     return (
         <Box sx={{ position: 'relative', borderRadius: 4, overflow: 'hidden', aspectRatio: '16/9', background: `linear-gradient(135deg, ${color}15, ${color}35)`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             {product.images?.[0] ? (
@@ -141,10 +152,12 @@ function ImageGallery({ product }: { product: any }) {
                     <Box sx={{ fontSize: 80, mb: 2, opacity: 0.5 }}>
                         {typeIcons[product.type] || <PlayArrowIcon sx={{ fontSize: 80 }} />}
                     </Box>
-                    <Typography color="text.secondary" variant="body2">Vista previa no disponible</Typography>
+                    <Typography color="text.secondary" variant="body2">
+                        {audioUrl ? 'Haz clic abajo para escuchar una muestra' : 'Vista previa no disponible'}
+                    </Typography>
                 </Box>
             )}
-            {product.previewUrl && (
+            {audioUrl && (
                 <Box
                     sx={{
                         position: 'absolute',
@@ -152,28 +165,24 @@ function ImageGallery({ product }: { product: any }) {
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        background: 'rgba(0,0,0,0.3)',
+                        background: 'rgba(0,0,0,0.35)',
                         transition: 'background 0.3s ease',
-                        cursor: 'pointer',
-                        '&:hover': { background: 'rgba(0,0,0,0.5)' },
+                        zIndex: 2,
                     }}
                 >
-                    <Box
-                        sx={{
-                            width: 72,
-                            height: 72,
-                            borderRadius: '50%',
-                            background: 'rgba(255,255,255,0.95)',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            boxShadow: '0 8px 32px rgba(0,0,0,0.3)',
-                            transition: 'transform 0.3s ease',
-                            '&:hover': { transform: 'scale(1.1)' },
+                    <PlayPreviewButton
+                        track={{
+                            id: product.id,
+                            title: product.title,
+                            artist: product.instructor?.name || 'DigitalMarket',
+                            audioUrl: audioUrl,
+                            coverUrl: product.images?.[0],
+                            bpm: product.bpm || (product.type === 'SAMPLE_PACK' ? 140 : 85),
+                            key: product.key || (product.type === 'SAMPLE_PACK' ? 'F# Min' : 'C Maj'),
                         }}
-                    >
-                        <PlayArrowIcon sx={{ fontSize: 36, color, ml: 0.5 }} />
-                    </Box>
+                        variant="overlay"
+                        className="!w-16 !h-16 shadow-2xl"
+                    />
                 </Box>
             )}
         </Box>

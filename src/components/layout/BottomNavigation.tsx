@@ -86,10 +86,7 @@ export default function BottomNavigation({ className = '' }: BottomNavigationPro
               {/* Icon with badge */}
               <div className="relative">
                 <Icon
-                  className="w-6 h-6"
-                  style={{
-                    color: active ? '#FF6B35' : '#ADB5BD',
-                  }}
+                  className={`w-6 h-6 ${active ? 'text-[#FF6B35]' : 'text-[#ADB5BD]'}`}
                 />
                 
                 {/* Cart Badge */}

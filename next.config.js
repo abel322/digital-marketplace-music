@@ -68,8 +68,6 @@ const nextConfig = {
   // ─── Transpile packages that need it ──────────────────────────────────────
   transpilePackages: [],
 
-  // Suppress Next.js warnings about Prisma in edge runtimes
-  serverComponentsExternalPackages: ['@prisma/client', 'prisma'],
   output: 'standalone',
   eslint: {
     ignoreDuringBuilds: true,
