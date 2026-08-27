@@ -4,6 +4,8 @@ import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { OrderStatus } from '@prisma/client'
 
+export const dynamic = 'force-dynamic'
+
 // ============================================================================
 // INTERFACES
 // ============================================================================
