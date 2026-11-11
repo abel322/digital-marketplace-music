@@ -82,7 +82,7 @@ const categoryColors: Record<string, string> = {
 
 export default function FeaturedProducts() {
   return (
-    <Box sx={{ py: { xs: 8, md: 12 }, background: '#FFFFFF' }}>
+    <Box sx={{ py: { xs: 8, md: 12 }, background: '#070a13' }}>
       <Container maxWidth="xl">
         <Stack direction={{ xs: 'column', sm: 'row' }} justifyContent="space-between" alignItems={{ sm: 'flex-end' }} mb={7}>
           <Box>
@@ -95,7 +95,7 @@ export default function FeaturedProducts() {
             <Typography
               variant="h3"
               fontWeight={800}
-              sx={{ mt: 1, fontSize: { xs: '1.8rem', md: '2.5rem' } }}
+              sx={{ mt: 1, color: '#FFFFFF', fontSize: { xs: '1.8rem', md: '2.5rem' } }}
             >
               Los más populares
             </Typography>
@@ -117,16 +117,17 @@ export default function FeaturedProducts() {
                 sx={{
                   borderRadius: 4,
                   overflow: 'hidden',
-                  background: '#FFFFFF',
-                  border: '1px solid rgba(0,0,0,0.08)',
-                  boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
+                  background: '#0f172a',
+                  border: '1px solid #1e293b',
+                  boxShadow: '0 4px 20px rgba(0,0,0,0.2)',
                   transition: 'all 0.3s ease',
                   height: '100%',
                   display: 'flex',
                   flexDirection: 'column',
                   '&:hover': {
                     transform: 'translateY(-6px)',
-                    boxShadow: '0 20px 40px rgba(0,0,0,0.12)',
+                    borderColor: 'rgba(56, 189, 248, 0.3)',
+                    boxShadow: '0 20px 40px rgba(0,0,0,0.4)',
                   },
                 }}
               >

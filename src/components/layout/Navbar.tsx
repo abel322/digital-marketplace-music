@@ -31,9 +31,10 @@ import CartDrawer from '@/components/cart/CartDrawer'
 
 const navLinks = [
   { label: 'Inicio', href: '/' },
-  { label: 'Cursos', href: '/courses' },
-  { label: 'Música', href: '/music' },
-  { label: 'Samples', href: '/samples' },
+  { label: 'Catálogo', href: '/products' },
+  { label: 'Cursos', href: '/products?type=COURSE' },
+  { label: 'Música', href: '/products?type=MUSIC' },
+  { label: 'Samples', href: '/products?type=SAMPLES' },
   { label: 'Blog', href: '/blog' },
 ]
 
@@ -54,12 +55,12 @@ export default function Navbar() {
         elevation={trigger ? 4 : 0}
         sx={{
           background: trigger
-            ? 'rgba(255,255,255,0.95)'
-            : 'transparent',
-          backdropFilter: trigger ? 'blur(10px)' : 'none',
-          borderBottom: trigger ? '1px solid rgba(0,0,0,0.08)' : 'none',
+            ? 'rgba(7, 10, 19, 0.92)'
+            : 'rgba(7, 10, 19, 0.75)',
+          backdropFilter: 'blur(12px)',
+          borderBottom: '1px solid rgba(255,255,255,0.08)',
           transition: 'all 0.3s ease',
-          color: trigger ? 'text.primary' : '#FFFFFF',
+          color: '#FFFFFF',
         }}
       >
         <Container maxWidth="xl">

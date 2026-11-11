@@ -18,10 +18,10 @@ import FacebookIcon from '@mui/icons-material/Facebook'
 
 const footerLinks = {
   Productos: [
-    { label: 'Cursos Online', href: '/courses' },
-    { label: 'Música', href: '/music' },
-    { label: 'Samples & Loops', href: '/samples' },
-    { label: 'Packs Bundle', href: '/bundles' },
+    { label: 'Cursos Online', href: '/products?type=COURSE' },
+    { label: 'Música & Beats', href: '/products?type=MUSIC' },
+    { label: 'Samples & Loops', href: '/products?type=SAMPLES' },
+    { label: 'Packs Bundle', href: '/products?type=BUNDLES' },
   ],
   Empresa: [
     { label: 'Sobre Nosotros', href: '/about' },

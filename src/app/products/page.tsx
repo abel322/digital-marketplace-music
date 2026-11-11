@@ -1,191 +1,103 @@
-'use client'
+// src/app/products/page.tsx
+import Link from 'next/link';
+import { prisma } from '@/lib/prisma';
+import { ProductCard } from '@/components/ProductCard';
 
-import { useState } from 'react'
-import {
-  Box,
-  Container,
-  Typography,
-  Stack,
-  Button,
-  Drawer,
-  useMediaQuery,
-  useTheme,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  TextField,
-  InputAdornment,
-} from '@mui/material'
-import SearchIcon from '@mui/icons-material/Search'
-import TuneIcon from '@mui/icons-material/Tune'
-import ProductGrid from '@/components/product/ProductGrid'
-import ProductFilters, { FilterState } from '@/components/product/ProductFilters'
+export const dynamic = 'force-dynamic';
 
-const MOCK_PRODUCTS = [
-  { id: '1', title: 'Producción Musical Completa', slug: 'produccion-musical-completa', price: 97, originalPrice: 197, type: 'COURSE', rating: 4.9, reviewCount: 234, badge: 'MÁS VENDIDO', badgeColor: '#FF6B35' },
-  { id: '2', title: 'Pack Trap Essentials 2024', slug: 'trap-essentials-2024', price: 29, originalPrice: 59, type: 'SAMPLE_PACK', rating: 4.8, reviewCount: 189, badge: 'NUEVO', badgeColor: '#4ECDC4', previewUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3', bpm: 140, keySignature: 'F# Min' },
-  { id: '3', title: 'Lo-Fi Chill Beats Vol. 3', slug: 'lofi-chill-beats-vol3', price: 19, type: 'MUSIC', rating: 4.7, reviewCount: 156, previewUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3', bpm: 85, keySignature: 'C Maj' },
-  { id: '4', title: 'Mezcla y Mastering Pro', slug: 'mezcla-mastering-pro', price: 67, originalPrice: 127, type: 'COURSE', rating: 4.9, reviewCount: 312, badge: 'OFERTA', badgeColor: '#FF6B35' },
-  { id: '5', title: 'House Music Pack Vol. 1', slug: 'house-music-pack-vol1', price: 39, type: 'SAMPLE_PACK', rating: 4.6, reviewCount: 98, previewUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3', bpm: 126, keySignature: 'G Min' },
-  { id: '6', title: 'FL Studio Completo', slug: 'fl-studio-completo', price: 79, originalPrice: 149, type: 'COURSE', rating: 4.8, reviewCount: 267 },
-  { id: '7', title: 'R&B Guitar Loops', slug: 'rnb-guitar-loops', price: 25, type: 'SAMPLE_PACK', rating: 4.7, reviewCount: 143, previewUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3', bpm: 90, keySignature: 'D Min' },
-  { id: '8', title: 'Piano Melodies Pack', slug: 'piano-melodies-pack', price: 22, type: 'MUSIC', rating: 4.5, reviewCount: 87, previewUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3', bpm: 75, keySignature: 'E Min' },
-]
+export default async function ProductsCatalogPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ type?: string; query?: string; sort?: string }> | { type?: string; query?: string; sort?: string };
+}) {
+  const resolvedParams = await searchParams;
+  const { type, query, sort } = resolvedParams || {};
 
-const SORT_OPTIONS = [
-  { label: 'Más recientes', value: 'createdAt-desc' },
-  { label: 'Precio: menor a mayor', value: 'price-asc' },
-  { label: 'Precio: mayor a menor', value: 'price-desc' },
-  { label: 'Mejor valorados', value: 'rating-desc' },
-]
+  const whereClause: any = {
+    status: 'PUBLISHED', // Solo mostrar contenido que el admin haya publicado
+  };
 
-const DEFAULT_FILTERS: FilterState = {
-  priceRange: [0, 300],
-  minRating: 0,
-  types: [],
-  tags: [],
-}
+  if (type) {
+    const typeUpper = type.toUpperCase();
+    if (typeUpper === 'COURSE') whereClause.type = 'COURSE';
+    else if (typeUpper === 'SAMPLES') whereClause.type = { in: ['SAMPLE_PACK', 'LOOP'] };
+    else if (typeUpper === 'MUSIC') whereClause.type = { in: ['TRACK', 'BEAT_TRACK'] };
+    else if (typeUpper === 'BUNDLES') whereClause.type = 'BUNDLE';
+  }
 
-export default function ProductsPage() {
-  const theme = useTheme()
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'))
-  const [filters, setFilters] = useState<FilterState>(DEFAULT_FILTERS)
-  const [sort, setSort] = useState('createdAt-desc')
-  const [search, setSearch] = useState('')
-  const [drawerOpen, setDrawerOpen] = useState(false)
+  if (query) {
+    whereClause.title = { contains: query, mode: 'insensitive' };
+  }
 
-  const filtered = MOCK_PRODUCTS.filter((p) => {
-    if (filters.types.length > 0 && !filters.types.includes(p.type)) return false
-    if (p.price < filters.priceRange[0] || p.price > filters.priceRange[1]) return false
-    if (filters.minRating > 0 && (p.rating || 0) < filters.minRating) return false
-    if (search && !p.title.toLowerCase().includes(search.toLowerCase())) return false
-    return true
-  }).sort((a, b) => {
-    if (sort === 'price-asc') return a.price - b.price
-    if (sort === 'price-desc') return b.price - a.price
-    if (sort === 'rating-desc') return (b.rating || 0) - (a.rating || 0)
-    return 0
-  })
+  const products = await prisma.product.findMany({
+    where: whereClause,
+    orderBy: sort === 'price-asc' ? { price: 'asc' } : { createdAt: 'desc' },
+    include: {
+      modules: {
+        select: { id: true, lessons: { select: { id: true } } },
+      },
+    },
+  });
+
+  const categories = [
+    { label: 'Todos', href: '/products', active: !type },
+    { label: 'Cursos Online', href: '/products?type=COURSE', active: type?.toUpperCase() === 'COURSE' },
+    { label: 'Samples & Loops', href: '/products?type=SAMPLES', active: type?.toUpperCase() === 'SAMPLES' },
+    { label: 'Música & Beats', href: '/products?type=MUSIC', active: type?.toUpperCase() === 'MUSIC' },
+    { label: 'Bundles', href: '/products?type=BUNDLES', active: type?.toUpperCase() === 'BUNDLES' },
+  ];
 
   return (
-    <Box sx={{ py: { xs: 4, md: 6 }, minHeight: '80vh' }}>
-      <Container maxWidth="xl">
-        {/* ─── Page Header ─── */}
-        <Box mb={4}>
-          <Typography variant="h4" fontWeight={800} mb={0.5}>
-            Todos los productos
-          </Typography>
-          <Typography color="text.secondary">
-            {filtered.length} de {MOCK_PRODUCTS.length} productos disponibles
-          </Typography>
-        </Box>
+    <div className="min-h-screen bg-[#070a13] text-slate-100 py-10 px-4 md:px-8">
+      <div className="max-w-7xl mx-auto">
+        {/* Encabezado */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 pb-6 border-b border-slate-800">
+          <div>
+            <h1 className="text-3xl font-black text-white tracking-tight">Catálogo Digital</h1>
+            <p className="text-sm text-slate-400 mt-1">
+              {products.length} {products.length === 1 ? 'producto disponible' : 'productos disponibles'}
+            </p>
+          </div>
 
-        <Stack direction={{ xs: 'column', md: 'row' }} spacing={4} alignItems="flex-start">
-          {/* ─── Sidebar Filters (Desktop) ─── */}
-          {!isMobile && (
-            <Box sx={{ width: 280, flexShrink: 0 }}>
-              <Box
-                sx={{
-                  p: 3,
-                  borderRadius: 4,
-                  border: '1px solid #E9ECEF',
-                  boxShadow: '0 2px 12px rgba(0,0,0,0.04)',
-                  background: '#FFFFFF',
-                  position: 'sticky',
-                  top: 88,
-                }}
+          {/* Filtros de Pestaña */}
+          <div className="flex items-center gap-1.5 bg-[#0f172a] p-1.5 rounded-2xl border border-slate-800 overflow-x-auto no-scrollbar">
+            {categories.map((cat) => (
+              <Link
+                key={cat.label}
+                href={cat.href}
+                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all shrink-0 ${
+                  cat.active
+                    ? 'bg-cyan-500 text-slate-950 font-black shadow-lg shadow-cyan-950/50'
+                    : 'text-slate-400 hover:text-white hover:bg-slate-800'
+                }`}
               >
-                <ProductFilters filters={filters} onChange={setFilters} />
-              </Box>
-            </Box>
-          )}
+                {cat.label}
+              </Link>
+            ))}
+          </div>
+        </div>
 
-          {/* ─── Main Content ─── */}
-          <Box sx={{ flex: 1, minWidth: 0 }}>
-            {/* Search + Sort + Mobile Filter Button */}
-            <Stack
-              direction={{ xs: 'column', sm: 'row' }}
-              spacing={2}
-              mb={3}
-              alignItems={{ sm: 'center' }}
-            >
-              <TextField
-                placeholder="Buscar productos..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                size="small"
-                sx={{ flex: 1 }}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SearchIcon fontSize="small" color="action" />
-                    </InputAdornment>
-                  ),
+        {/* Cuadrícula de Productos */}
+        {products.length === 0 ? (
+          <div className="text-center py-24 bg-slate-900/40 rounded-3xl border border-slate-800">
+            <p className="text-slate-400 text-sm">No hay productos publicados bajo esta categoría.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {products.map((item: any) => (
+              <ProductCard
+                key={item.id}
+                product={{
+                  ...item,
+                  coverUrl: item.coverUrl || item.thumbnailUrl,
+                  productType: item.productType || item.type,
+                  musicalKey: item.musicalKey || item.key,
                 }}
               />
-
-              {isMobile && (
-                <Button
-                  startIcon={<TuneIcon />}
-                  variant="outlined"
-                  onClick={() => setDrawerOpen(true)}
-                  sx={{ borderRadius: 3, borderWidth: 2, '&:hover': { borderWidth: 2 } }}
-                >
-                  Filtros
-                  {(filters.types.length > 0 || filters.minRating > 0 || filters.tags.length > 0) && (
-                    <Box
-                      component="span"
-                      sx={{
-                        ml: 1, width: 18, height: 18, borderRadius: '50%',
-                        background: 'linear-gradient(135deg, #FF6B35, #FF8C61)',
-                        color: '#fff', fontSize: '0.65rem', fontWeight: 700,
-                        display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-                      }}
-                    >
-                      {filters.types.length + (filters.minRating > 0 ? 1 : 0) + filters.tags.length}
-                    </Box>
-                  )}
-                </Button>
-              )}
-
-              <FormControl size="small" sx={{ minWidth: 200 }}>
-                <InputLabel>Ordenar por</InputLabel>
-                <Select
-                  value={sort}
-                  label="Ordenar por"
-                  onChange={(e) => setSort(e.target.value)}
-                  sx={{ borderRadius: 3 }}
-                >
-                  {SORT_OPTIONS.map((o) => (
-                    <MenuItem key={o.value} value={o.value}>{o.label}</MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Stack>
-
-            {/* Product Grid */}
-            <ProductGrid
-              products={filtered}
-              emptyMessage="No se encontraron productos con esos filtros"
-            />
-          </Box>
-        </Stack>
-      </Container>
-
-      {/* ─── Mobile Filter Drawer ─── */}
-      <Drawer
-        anchor="left"
-        open={drawerOpen}
-        onClose={() => setDrawerOpen(false)}
-        PaperProps={{ sx: { width: 300, p: 3, borderRadius: '0 16px 16px 0' } }}
-      >
-        <ProductFilters
-          filters={filters}
-          onChange={setFilters}
-          onClose={() => setDrawerOpen(false)}
-        />
-      </Drawer>
-    </Box>
-  )
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
 }

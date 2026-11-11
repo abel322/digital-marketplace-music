@@ -1,6 +1,6 @@
 'use client'
 
-import { Box, Container, Typography, Grid, Stack } from '@mui/material'
+import { Box, Container, Typography, Grid } from '@mui/material'
 import Link from 'next/link'
 import SchoolIcon from '@mui/icons-material/School'
 import MusicNoteIcon from '@mui/icons-material/MusicNote'
@@ -12,43 +12,43 @@ const categories = [
     icon: <SchoolIcon sx={{ fontSize: 48 }} />,
     title: 'Cursos Online',
     desc: 'Producción musical, mezcla, mastering y más',
-    count: '120+ cursos',
+    count: 'Cursos',
     color: '#FF6B35',
     gradient: 'linear-gradient(135deg, #FF6B35, #FF8C60)',
-    href: '/courses',
+    href: '/products?type=COURSE',
   },
   {
     icon: <MusicNoteIcon sx={{ fontSize: 48 }} />,
     title: 'Música Digital',
     desc: 'Pistas, instrumentales y beats únicos',
-    count: '300+ tracks',
+    count: 'Beats & Tracks',
     color: '#4ECDC4',
     gradient: 'linear-gradient(135deg, #4ECDC4, #45B7D1)',
-    href: '/music',
+    href: '/products?type=MUSIC',
   },
   {
     icon: <GraphicEqIcon sx={{ fontSize: 48 }} />,
     title: 'Samples & Loops',
     desc: 'Librerías profesionales de alta calidad',
-    count: '5000+ samples',
+    count: 'Samples & Loops',
     color: '#FFE66D',
     gradient: 'linear-gradient(135deg, #FFE66D, #F9D423)',
-    href: '/samples',
+    href: '/products?type=SAMPLES',
   },
   {
     icon: <LibraryMusicIcon sx={{ fontSize: 48 }} />,
     title: 'Packs Bundle',
     desc: 'Colecciones completas con descuento',
-    count: '50+ bundles',
+    count: 'Bundles',
     color: '#A29BFE',
     gradient: 'linear-gradient(135deg, #A29BFE, #6C5CE7)',
-    href: '/bundles',
+    href: '/products?type=BUNDLES',
   },
 ]
 
 export default function CategoriesSection() {
   return (
-    <Box sx={{ py: { xs: 8, md: 12 }, background: '#F8F9FA' }}>
+    <Box sx={{ py: { xs: 8, md: 12 }, background: '#090d16' }}>
       <Container maxWidth="xl">
         <Box textAlign="center" mb={7}>
           <Typography
@@ -60,7 +60,7 @@ export default function CategoriesSection() {
           <Typography
             variant="h3"
             fontWeight={800}
-            sx={{ mt: 1, fontSize: { xs: '1.8rem', md: '2.5rem' } }}
+            sx={{ mt: 1, color: '#FFFFFF', fontSize: { xs: '1.8rem', md: '2.5rem' } }}
           >
             Todo lo que necesitas para
             <Box
@@ -96,14 +96,14 @@ export default function CategoriesSection() {
                   textDecoration: 'none',
                   p: 4,
                   borderRadius: 4,
-                  background: '#FFFFFF',
-                  border: '2px solid transparent',
-                  boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
+                  background: '#0f172a',
+                  border: '1px solid #1e293b',
+                  boxShadow: '0 4px 20px rgba(0,0,0,0.2)',
                   transition: 'all 0.3s ease',
                   height: '100%',
                   '&:hover': {
                     transform: 'translateY(-8px)',
-                    border: `2px solid ${cat.color}40`,
+                    border: `1px solid ${cat.color}60`,
                     boxShadow: `0 20px 40px ${cat.color}20`,
                     '& .cat-icon': {
                       transform: 'scale(1.1)',
@@ -128,7 +128,7 @@ export default function CategoriesSection() {
                 >
                   {cat.icon}
                 </Box>
-                <Typography variant="h6" fontWeight={700} mb={1}>
+                <Typography variant="h6" fontWeight={700} mb={1} sx={{ color: '#FFFFFF' }}>
                   {cat.title}
                 </Typography>
                 <Typography variant="body2" color="text.secondary" mb={2} lineHeight={1.6}>

@@ -16,7 +16,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="es">
+    <html lang="es" className="dark">
       <head>
         {/* JSON-LD Structured Data — WebSite + SearchAction */}
         <script
@@ -30,10 +30,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {/* Web App Manifest */}
         <link rel="manifest" href="/site.webmanifest" />
       </head>
-      <body>
+      <body className="bg-[#070a13] text-slate-100 min-h-screen flex flex-col">
         <Providers>
           <Navbar />
-          <main className="pb-24 sm:pb-28" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+          <main className="flex-1 pb-24 sm:pb-28">
             {children}
           </main>
           <Footer />
@@ -43,4 +43,3 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     </html>
   )
 }
-

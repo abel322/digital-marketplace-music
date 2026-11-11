@@ -22,7 +22,7 @@ declare module '@mui/material/styles' {
 
 export const theme = createTheme({
   palette: {
-    mode: 'light',
+    mode: 'dark',
     primary: {
       main: '#FF6B35',
       light: '#FF8C61',
@@ -36,13 +36,13 @@ export const theme = createTheme({
       contrastText: '#FFFFFF',
     },
     background: {
-      default: '#F8F9FA',
-      paper: '#FFFFFF',
+      default: '#070a13',
+      paper: '#0f172a',
     },
     text: {
-      primary: '#212529',
-      secondary: '#6C757D',
-      disabled: '#ADB5BD',
+      primary: '#F8FAFC',
+      secondary: '#94A3B8',
+      disabled: '#64748B',
     },
     error: { main: '#DC3545', light: '#F1AEB5' },
     warning: { main: '#FFC107', light: '#FFE69C' },
