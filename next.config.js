@@ -53,8 +53,9 @@ const nextConfig = {
   async redirects() {
     return [
       { source: '/courses', destination: '/products?type=COURSE', permanent: true },
-      { source: '/samples', destination: '/products?type=SAMPLE_PACK', permanent: true },
+      { source: '/samples', destination: '/products?type=SAMPLES', permanent: true },
       { source: '/music', destination: '/products?type=MUSIC', permanent: true },
+      { source: '/bundles', destination: '/products?type=BUNDLES', permanent: true },
     ]
   },
 

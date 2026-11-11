@@ -17,12 +17,18 @@ export default async function ProductsCatalogPage({
     status: 'PUBLISHED', // Solo mostrar contenido que el admin haya publicado
   };
 
-  if (type) {
-    const typeUpper = type.toUpperCase();
-    if (typeUpper === 'COURSE') whereClause.type = 'COURSE';
-    else if (typeUpper === 'SAMPLES') whereClause.type = { in: ['SAMPLE_PACK', 'LOOP'] };
-    else if (typeUpper === 'MUSIC') whereClause.type = { in: ['TRACK', 'BEAT_TRACK'] };
-    else if (typeUpper === 'BUNDLES') whereClause.type = 'BUNDLE';
+  const typeUpper = type?.toUpperCase();
+
+  if (typeUpper) {
+    if (typeUpper === 'COURSE' || typeUpper === 'COURSES') {
+      whereClause.type = 'COURSE';
+    } else if (['SAMPLES', 'SAMPLE_PACK', 'LOOP_KIT', 'LOOP'].includes(typeUpper)) {
+      whereClause.type = { in: ['SAMPLE_PACK', 'LOOP'] };
+    } else if (['MUSIC', 'BEAT_TRACK', 'TRACK'].includes(typeUpper)) {
+      whereClause.type = 'TRACK';
+    } else if (['BUNDLES', 'BUNDLE'].includes(typeUpper)) {
+      whereClause.type = 'BUNDLE';
+    }
   }
 
   if (query) {
@@ -40,11 +46,11 @@ export default async function ProductsCatalogPage({
   });
 
   const categories = [
-    { label: 'Todos', href: '/products', active: !type },
-    { label: 'Cursos Online', href: '/products?type=COURSE', active: type?.toUpperCase() === 'COURSE' },
-    { label: 'Samples & Loops', href: '/products?type=SAMPLES', active: type?.toUpperCase() === 'SAMPLES' },
-    { label: 'Música & Beats', href: '/products?type=MUSIC', active: type?.toUpperCase() === 'MUSIC' },
-    { label: 'Bundles', href: '/products?type=BUNDLES', active: type?.toUpperCase() === 'BUNDLES' },
+    { label: 'Todos', href: '/products', active: !typeUpper },
+    { label: 'Cursos Online', href: '/products?type=COURSE', active: typeUpper === 'COURSE' || typeUpper === 'COURSES' },
+    { label: 'Samples & Loops', href: '/products?type=SAMPLES', active: ['SAMPLES', 'SAMPLE_PACK', 'LOOP_KIT', 'LOOP'].includes(typeUpper || '') },
+    { label: 'Música & Beats', href: '/products?type=MUSIC', active: ['MUSIC', 'BEAT_TRACK', 'TRACK'].includes(typeUpper || '') },
+    { label: 'Bundles', href: '/products?type=BUNDLES', active: ['BUNDLES', 'BUNDLE'].includes(typeUpper || '') },
   ];
 
   return (
